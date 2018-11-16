@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+    options {
+       ansicolor('xterm')
+    }
+    stages {
+       stage('InvokeTests') {
+         when {
+            expression { return fileExists('Rakefile') }
+         }
+         steps {
+            echo 'chef exec rake'
+         }
+        }
+        stage('Versioncookbook') {
+           environment {
+              MAJOR = '0'
+              MINOR - '1'
+           }
+           when {
+              expression { BRANCH_NAME == 'master' }
+           }
+           steps {
+              echo 'Increment Cookbook Version' 
+              sh "sed -i \"s/^version.*/version '${MAJOR}.${MINOR}.${BUILD_NUMBER}'/g\" metadata.rb"
+           }
+         }
+        stage('Uploadcookbook') {
+           environment {
+              COOKBOOK_NAME = 'cb_install_http'
+           }
+           when {
+              expression { BRANCH_NAME == 'master' }
+           }
+           steps {
+              echo 'Uploading Cookbook to the Chef Server'
+              sh "knife cookbook upload ${COOKBOOK_NAME}"
+           }
+         }
+       }
+}

@@ -1,0 +1,9 @@
+Matrics/LineLength:
+  # Change the default 80 chars limit value
+  Max: 250
+
+EndOfLine:
+  Enabled: false
+
+Metrics/BlockLength:
+  Max: 100
